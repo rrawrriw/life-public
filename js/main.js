@@ -1,4 +1,4 @@
-var app = angular.module('life', ['ngRoute', 'ctrl']);
+var app = angular.module('life', ['ngRoute', 'ctrl', 'directives']);
 
 app.config(['$routeProvider',
   function($routeProvider) {

@@ -1,4 +1,10 @@
-<div id="life" on-scroll="ctrlStages()"></div>
+<div id="life" scrolly="ctrlStages($event)"></div>
 
 <div id="details">
+  <ul id="stages">
+    <li ng-repeat="stage in stages.active">
+      <h3>{{ stage.title }}</h3>
+      <p>{{ stage.desc }}</h3>
+    </li>
+  </ul>
 </div>
