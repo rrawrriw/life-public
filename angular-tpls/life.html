@@ -1,4 +1,6 @@
 <div id="main">
+  <div id="now">{{ now }}</div>
+
   <div id="life">
     <div id="stages"></div>
     <input id="life-time" type="range" min="0" max="600" ng-model="lifeTime" ng-change="ctrlStages($event)">  
@@ -6,10 +8,11 @@
 
   <div id="details">
     <ul id="stage-details">
-      <li ng-repeat="stage in stages.active">
+      <li class="stage-detail" ng-repeat="stage in activeStages">
         <h3>{{ stage.title }}</h3>
         <p>{{ stage.desc }}</h3>
       </li>
     </ul>
   </div>
+
 </div>

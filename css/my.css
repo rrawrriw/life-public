@@ -1,12 +1,16 @@
+.navbar {
+  background: #ffec00;
+}
+
 #main {
-  width: 600px;
+  width: 89%;
   margin-left: auto;
   margin-right: auto;
   margin-top: 50px;
 }
 
 #life {
-  width: 600px;
+  width: 100%;
   padding: 0;
 }
 
@@ -18,4 +22,27 @@
 #life-time {
   width: 100%;
 	outline: 0;
+}
+
+#stage-details {
+  margin: 0;
+  margin-top: 15px;
+  padding: 0;
+  overflow: hidden;
+}
+
+.stage-detail {
+  float: left;
+  margin-left: 0;
+  margin-right: 15px;
+  padding: 15px;
+  color: white;
+  background: #1F1F1F;
+  border: 3px solid black;
+  border-radius: 4px;
+  list-style: none;
+}
+
+.stage-detail h3 {
+  margin-top: 5px;
 }
