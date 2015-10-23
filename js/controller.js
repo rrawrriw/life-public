@@ -53,26 +53,45 @@ ctrls.controller('LifeCtrl', [
 
     }
 
+    var TimeLines = function (paper) {
+      return {
+        _paper: paper,
+        _lines: [],
+        removeLines: function () {
+          angular.forEach(this._lines, function (val, i) {
+            val.remove();
+          });
+        },
+        draw: function (pos) {
+          this.removeLines();
+
+          var h = this._paper.height;
+          var w = this._paper.width;
+          var e = this._paper.path('M'+ pos +','+ (h-5) +'L'+ pos +','+ 5 );
+          this._lines.push(e);
+        },
+      }
+    }
+
     var showStages = function (stages, scrollPos) {
       angular.forEach(stages, function (val, i) {
         if (!val.onList() && val.isActive(scrollPos)) {
-          console.log('append '+ val.title);
+          //console.log('append '+ val.title);
           $scope.stages.active.push(val);
           val.onList(true);
         }
+
       });
-      $scope.$apply();
     }
 
     var hideStages = function (stages, scrollPos) {
       angular.forEach(stages, function (val, i) {
         if (!val.isActive(scrollPos)) {
-          console.log('remove '+ val.title);
+          //console.log('remove '+ val.title);
           $scope.stages.active.splice(i, 1);
           val.onList(false);
         }
       });
-      $scope.$apply();
     }
 
     var drawStages = function (paper, stages) {
@@ -85,13 +104,22 @@ ctrls.controller('LifeCtrl', [
       });
     }
 
+    var drawYears = function (paper, stages) {
+      var h = paper.height;
+      var w = paper.width;
+      paper.path('M0,'+ (h) +'L'+ (w) +','+ (h));
+    }
+
     var init = function() {
+      var paper = Raphael(angular.element('#stages')[0], 600, 200);
+
       $scope.stages = {
         all: [],
         active: [],
       };
-
-      var paper = Raphael(angular.element('#life')[0], 600, 200);
+      $scope.paper = paper;
+      $scope.lifeTime = 0;
+      $scope.timeLines = new TimeLines(paper);
 
       var s1 = new Stage({
         title: 'Zweirad-Berndt',
@@ -107,17 +135,26 @@ ctrls.controller('LifeCtrl', [
         to: new Date(),
       });
 
-      $scope.stages.all.push(s1, s2);
+      var s3 = new Stage({
+        title: 'HFT Stuttgart - Informatik Studium',
+        desc: 'Studium der Mathematik',
+        from: new Date(),
+        to: new Date(),
+      });
 
+      $scope.stages.all.push(s1, s2, s3);
+
+      drawYears(paper, $scope.stages.all);
       drawStages(paper, $scope.stages.all);
 
     }
 
 
     $scope.ctrlStages = function (e) {
-      var pos = e.target.scrollLeft;
+      var pos = $scope.lifeTime;
       showStages($scope.stages.all, pos);
-      hideStages($scope.stages.all, pos);
+      hideStages($scope.stages.active, pos);
+      $scope.timeLines.draw(pos);
     }
 
     init();
