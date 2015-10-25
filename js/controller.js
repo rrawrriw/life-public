@@ -8,43 +8,16 @@ ctrls.controller('LifeCtrl', [
   'Stages',
   'LifePaper',
   'Schedule',
-  function ($scope, Stage, Stages, LifePaper, Schedule) {
+  'Story',
+  function ($scope, Stage, Stages, LifePaper, Schedule, Story) {
 
     var initRenderPage = function (dims) {
       angular.element('#life-time').attr({'min': 0, 'max': dims.main.width});
     }
 
     var init = function() {
-
-      var s0 = new Stage({
-        title: 'Hofmann-Verlag',
-        desc: 'IT-Administrator',
-        from: new Date(2007, 10, 1, 0,0,0,0),
-        to: new Date(2012, 3, 1, 0,0,0,0),
-      });
-
-      var s1 = new Stage({
-        title: 'Zweirad-Berndt',
-        desc: 'Arbeiten beim Roland',
-        from: new Date(2012, 0, 1, 0,0,0,0),
-        to: new Date(2013, 1, 1, 0,0,0,0),
-      });
-
-      var s2 = new Stage({
-        title: 'HFT Stuttgart - Mathematik Studium',
-        desc: 'Studium der Mathematik',
-        from: new Date(2012, 7, 1, 0,0,0,0),
-        to: new Date(2014, 6, 1, 0,0,0,0),
-      });
-
-      var s3 = new Stage({
-        title: 'HFT Stuttgart - Informatik Studium',
-        desc: 'Studium der Mathematik',
-        from: new Date(2014, 7, 1, 0,0,0,0),
-        to: new Date(2015, 4, 1, 0,0,0,0),
-      });
-
-      $scope.stages = new Stages([s0, s1, s2, s3]);
+      $scope.story = Story;
+      $scope.stages = new Stages($scope.story);
       $scope.schedule = new Schedule($scope.stages);
 
       $scope.now = '04/2014';
@@ -52,6 +25,7 @@ ctrls.controller('LifeCtrl', [
       $scope.lifePaper = LifePaper;
       $scope.lifePaper.setup({
         paper: angular.element('#stages')[0],
+        colors: ['#ffec00', '#87888C'],
         stages: $scope.stages,
         schedule: $scope.schedule,
         mainBox: '#main',

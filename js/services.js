@@ -2,6 +2,119 @@
 
 var srv = angular.module('srv', []);
 
+srv.factory('Story', [
+  'Stage',
+  function (Stage) {
+    return [
+      new Stage({
+        title: 'Ausbildung zum Verlags-Kaufmann',
+        desc: 'Ausbildung zum Verlags-Kaufmann an der Johann Friedrich von Cotta Schule, Stuttgart',
+        from: new Date(2005, 8, 1, 0,0,0,0),
+        to: new Date(2008, 0, 1, 0,0,0,0),
+      }),
+
+      new Stage({
+        title: 'IT-Administrator',
+        desc: 'IT-Administrator im Unternehmen Hofmann-Verlag GmbH & Co. KG, Schorndorf Administration von Servern (Windows 2003, Debian) und des Netzwerks des Internetauftritts (php, apache2, mysql) der Client-Computer (XP, Vista, MAC OSX) und Drucker',
+        from: new Date(2004, 10, 1, 0,0,0,0),
+        to: new Date(2010, 9, 1, 0,0,0,0),
+      }),
+      
+      new Stage({
+        title: 'CD Buchbeilagen',
+        desc: 'CD Buchbeilagen für Hofamann-Verlag',
+        from: new Date(2010, 9, 1, 0,0,0,0),
+        to: new Date(2015, 10, 1, 0,0,0,0),
+      }),
+      
+      new Stage({
+        title: 'Webshop Besatzartikel',
+        desc: 'Erstellen eine Webshops in Python',
+        from: new Date(2010, 7, 1, 0,0,0,0),
+        to: new Date(2010, 10, 1, 0,0,0,0),
+      }),
+
+      new Stage({
+        title: 'Auslandsaufenthalt',
+        desc: 'Auslandsaufenthalt in Schweden, Neuseeland, Indien und Nepal',
+        from: new Date(2010, 10, 1, 0,0,0,0),
+        to: new Date(2011, 3, 1, 0,0,0,0),
+      }),
+
+      new Stage({
+        title: 'Zweirad-Berndt',
+        desc: 'Arbeit als Fahrradmechaniker bei Zweirad-Berndt in Korb',
+        from: new Date(2011, 3, 1, 0,0,0,0),
+        to: new Date(2013, 1, 1, 0,0,0,0),
+      }),
+
+      new Stage({
+        title: 'Webshop Edel und Rostfrei',
+        desc: 'Erstellen eine Webshops in Python',
+        from: new Date(2011, 4, 1, 0,0,0,0),
+        to: new Date(2011, 7, 1, 0,0,0,0),
+      }),
+
+      new Stage({
+        title: 'Webseite atelier-josten',
+        desc: 'Erstellen der Webseite atelier-josten',
+        from: new Date(2012, 10, 1, 0,0,0,0),
+        to: new Date(2013, 0, 1, 0,0,0,0),
+      }),
+
+      new Stage({
+        title: 'Webseite Zweirad-Berndt',
+        desc: 'Erstellen der Webseite atelier-josten',
+        from: new Date(2012, 9, 1, 0,0,0,0),
+        to: new Date(2012, 11, 1, 0,0,0,0),
+      }),
+
+      new Stage({
+        title: 'Kaufmännische FH',
+        desc: 'kaufmännische Fachhochschulreife am Kolping-Berufskolleg, Stuttgart',
+        from: new Date(2011, 8, 1, 0,0,0,0),
+        to: new Date(2012, 6, 1, 0,0,0,0),
+      }),
+
+      new Stage({
+        title: 'Project - Dokumenten Scanning',
+        desc: 'Scannen und ablegen von Dokumenten',
+        from: new Date(2013, 1, 1, 0,0,0,0),
+        to: new Date(2013, 2, 1, 0,0,0,0),
+      }),
+
+      new Stage({
+        title: 'Mathematik Studium',
+        desc: 'Studium der Mathematik an der HFT-Stuttgart',
+        from: new Date(2013, 2, 1, 0,0,0,0),
+        to: new Date(2015, 2, 1, 0,0,0,0),
+      }),
+
+      new Stage({
+        title: 'Werkstudent DFS',
+        desc: 'Werkstudent bei Daimler Financial Services im IT-Projemanagment',
+        from: new Date(2014, 0, 1, 0,0,0,0),
+        to: new Date(2015, 10, 1, 0,0,0,0),
+      }),
+
+      new Stage({
+        title: 'Project - DocMa',
+        desc: 'Documentverwaltung',
+        from: new Date(2015, 4, 1, 0,0,0,0),
+        to: new Date(2015, 7, 1, 0,0,0,0),
+      }),
+
+      new Stage({
+        title: 'Informatik Studium',
+        desc: 'Studium der Informatik an der HFT-Stuttgart',
+        from: new Date(2015, 3, 1, 0,0,0,0),
+        to: new Date(2015, 10, 1, 0,0,0,0),
+      }),
+
+    ];
+  }
+]);
+
 srv.factory('Stage', [
   function () {
     return function (data) {
@@ -10,6 +123,7 @@ srv.factory('Stage', [
         _x: -1,
         _width: -1,
         _state: false,
+        _color: '#ffffff',
         title: data.title,
         desc: data.desc,
         from: data.from,
@@ -39,6 +153,15 @@ srv.factory('Stage', [
             return
           } else {
             return this._width;
+          }
+        },
+
+        color: function (newC) {
+          if (newC !== undefined) {
+            this._color = newC;
+            return
+          } else {
+            return this._color;
           }
         },
 
@@ -401,22 +524,26 @@ srv.factory('StateMachine', [
 srv.factory('LifePaper', [
   'TimeLines',
   'StateMachine',
-  function (TimeLines, StateMachine) {
+  'RGB',
+  function (TimeLines, StateMachine, RGB) {
 
 
     return {
+      _RGB: {},
       _paper: {},
       _dims: {},
       _stages:  {},
       _schedule: [],
 
-      drawStage: function (x, levelIndex, duration) {
+      drawStage: function (x, levelIndex, duration, stage) {
             var levelHeight = (this._dims.levelSpacer + this._dims.stage.height),
-                y = (this._dims.paper.height - (this._dims.stage.marginBottom + (levelHeight * (levelIndex + 1)))),
+                y = ( this._dims.paper.height - this._dims.stage.marginBottom - (levelHeight * levelIndex) ),
                 width = duration * this._dims.month.width;
 
+            var color = this._RGB.color();
             var r = this._paper.rect(x, y, width, this._dims.stage.height);
             r.translate(0.5, 0.5);
+            r.attr({'fill': color});
             //console.log('draw stage ', x, y, width, this._dims.stage.height, r);
             return r;
               
@@ -438,11 +565,12 @@ srv.factory('LifePaper', [
             }
 
             if (stateMachine.leaveState()) {
-              var rect = that.drawStage(startPos, levelIndex, duration),
-                  stage = that._stages.readStage(stateMachine.lastInput());
+              var stage = that._stages.readStage(stateMachine.lastInput()),
+                  rect = that.drawStage(startPos, levelIndex, duration, stage);
 
               stage.x(rect.attrs.x);
               stage.width(rect.attrs.width);
+              stage.color(rect.attrs.fill);
 
               duration = 0;
             }
@@ -520,10 +648,10 @@ srv.factory('LifePaper', [
         var timeLineCenter = Math.round(timeLineHeight / 3);
         var timeLineFontSize = Math.round(timeLineCenter/0.6);
 
-        var levelSpacer = Math.round(paperHeight * 0.08);
+        var levelSpacer = Math.round(paperHeight * 0.06);
         var schedule = this._schedule.make();
         var sl = schedule.length;
-        var stageHeight = Math.round(((paperHeight-timeLineHeight+levelSpacer) / Math.pow(sl,2)) - levelSpacer);
+        var stageHeight = Math.round(((paperHeight-timeLineHeight-(2*levelSpacer)) / sl) - levelSpacer);
       
         var n = this._stages.newest();
         var o = this._stages.oldest();
@@ -571,6 +699,7 @@ srv.factory('LifePaper', [
       },
 
       setup: function (data) {
+        this._RGB = new RGB(data.colors);
         this._stages = data.stages;
         this._mainBox = data.mainBox;
         this._schedule = data.schedule;
@@ -594,5 +723,73 @@ srv.factory('LifePaper', [
       },
 
     };
+  }
+]);
+
+srv.factory('RGB', [
+  function () {
+    return function (baseColors) {
+
+      var toRGB = function (hex) {
+        var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        if (result) {
+          return {
+            r: parseInt(result[1], 16),
+            g: parseInt(result[2], 16),
+            b: parseInt(result[3], 16)
+          }
+        } 
+
+        return null;
+      };
+
+      var colors = function () {
+        var cs = {}
+        angular.forEach(baseColors, function (color, index) {
+          cs[color] = toRGB(color);
+        });
+
+        return cs
+      }();
+
+      return {
+        _baseColors: baseColors,
+        _colors: colors,
+
+        randInt: function (min, max) {
+          return Math.round(Math.random() * (max - min) + min);
+        },
+
+        pToHex: function (c) {
+          var hex = c.toString(16);
+
+          if (hex.length == 1) {
+            return "0" + hex;
+          }
+
+          return hex;
+        },
+
+        toHex: function (r, g, b) {
+          return "#" + this.pToHex(r) + this.pToHex(g) + this.pToHex(b);
+        },
+
+        color: function () {
+          var i = this.randInt(0, (this._baseColors.length - 1) );
+          console.log('Pick Color', i);
+          var c = this._colors[this._baseColors[i]];
+          
+          var r = this.randInt(c.r-20, c.r);
+          var g = this.randInt(c.g-20, c.r);
+          var b = this.randInt(c.b-20, c.r);
+
+          console.log(c);
+          console.log(this.toHex(r,g,b));
+          return this.toHex(r,g,b);
+
+        },
+
+      }
+    }
   }
 ]);

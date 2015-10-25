@@ -9,8 +9,9 @@
   <div id="details">
     <ul id="stage-details">
       <li class="stage-detail" ng-repeat="stage in activeStages">
+        <div class="color" style="background:{{ stage.color() }}"></div>
         <h3>{{ stage.title }}</h3>
-        <p>{{ stage.desc }}</h3>
+        <p>{{ stage.desc }}</p>
       </li>
     </ul>
   </div>
