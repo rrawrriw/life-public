@@ -65,13 +65,17 @@ describe('Srv Life', function() {
       expect(stages.diffMonths(d1, d2)).toBe(12);
     });
 
-    it('should return time range between oldest and newest stage', function () {
+    it('should return time range (in months) between oldest and newest stage', function () {
       expect(stages.timeRange()).toBe(12)
     });
 
     it('should return the active stages', function () {
       expect(stages.activeStage(100)).toEqual([s3]);
       expect(stages.activeStage(80)).toEqual([s3, s2]);
+    });
+
+    it('should return a stage with the given id', function () {
+      expect(stages.readStage(1)).toEqual(s2);
     });
   });
 
@@ -120,8 +124,8 @@ describe('Srv Life', function() {
     it('should append a new level to schedule', function () {
       var exp = [
         {
-          "2009": [true, true, true, true, true, true, true, true, true, true, true, true],
-          "2010": [true, true, true, true, true, true, true, true, true, true, true, true],
+          "2009": [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+          "2010": [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
         }
       ];
 
@@ -132,8 +136,8 @@ describe('Srv Life', function() {
     it('schould append stage', function () {
       var exp = [
         {
-          "2009": [true, true, true, true, true, true, true, true, 2, 2, 2, 2],
-          "2010": [2, 2, 2, 2, 2, 2, 2, 2, true, true, true, true], 
+          "2009": [-1, -1, -1, -1, -1, -1, -1, -1, 2, 2, 2, 2],
+          "2010": [2, 2, 2, 2, 2, 2, 2, 2, -1, -1, -1, -1], 
         }
       ]
       schedule.appendLevel();
@@ -141,17 +145,17 @@ describe('Srv Life', function() {
       expect(schedule._schedule).toEqual(exp);
     });
 
-    it('should valided if it possible to put stage to level - true', function () {
+    it('should valided if it possible to put stage to level - -1', function () {
       var l = {
-                "2010": [1, true, true, true, true, true, true, true, true, true, true, true],
+                "2010": [1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
               };
       expect(schedule.validLevel(l, s2)).toBe(true);
     });
 
     it('should valided if it possible to put stage to level - false', function () {
       var l = {
-        "2009": [true, true, true, true, true, true, true, 3, 3, 3, 3, 3],
-        "2010": [3, 3, 3, 3, 3, 3, 3, true, true, true, true, true],
+        "2009": [-1, -1, -1, -1, -1, -1, -1, 3, 3, 3, 3, 3],
+        "2010": [3, 3, 3, 3, 3, 3, 3, -1, -1, -1, -1, -1],
       };
       expect(schedule.validLevel(l, s2)).toBe(false);
     });
@@ -159,12 +163,12 @@ describe('Srv Life', function() {
     it('should return schedule', function () {
       var exp = [
         {
-          "2009": [true, true, true, true, true, true, true, true, 2, 2, 2, 2],
-          "2010": [2, 2, 2, 2, 2, 2, 2, 2, true, true, true, true],
+          "2009": [-1, -1, -1, -1, -1, -1, -1, -1, 2, 2, 2, 2],
+          "2010": [2, 2, 2, 2, 2, 2, 2, 2, -1, -1, -1, -1],
         },
         {
-          "2009": [true, true, true, true, true, true, true, true, true, true, true, true],
-          "2010": [true, 0, 1, 1, 1, 1, 1, 1, 1, true, true, true],
+          "2009": [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+          "2010": [-1, 0, 1, 1, 1, 1, 1, 1, 1, -1, -1, -1],
         }
       ];
       expect(schedule.make()).toEqual(exp);
@@ -173,5 +177,47 @@ describe('Srv Life', function() {
 
   });
 
+  describe('StateMachine', function () {
+    var stateMachine;
+
+    beforeEach(inject(function($injector) {
+      stateMachine = new $injector.get('StateMachine')();
+    }));
+
+    it('should change the states', function () {
+      stateMachine.next(-1);
+      expect(stateMachine.noneState()).toBe(true);
+      stateMachine.next(1);
+      expect(stateMachine.enterState()).toBe(true);
+      expect(stateMachine.inState()).toBe(false);
+      expect(stateMachine.leaveState()).toBe(false);
+      expect(stateMachine.noneState()).toBe(false);
+
+      stateMachine.next(1);
+      expect(stateMachine.enterState()).toBe(false);
+      expect(stateMachine.inState()).toBe(true);
+      expect(stateMachine.leaveState()).toBe(false);
+      expect(stateMachine.noneState()).toBe(false);
+
+      stateMachine.next(0);
+      expect(stateMachine.enterState()).toBe(true);
+      expect(stateMachine.inState()).toBe(false);
+      expect(stateMachine.leaveState()).toBe(true);
+      expect(stateMachine.noneState()).toBe(false);
+
+      stateMachine.next(-1);
+      expect(stateMachine.enterState()).toBe(false);
+      expect(stateMachine.inState()).toBe(false);
+      expect(stateMachine.leaveState()).toBe(true);
+      expect(stateMachine.noneState()).toBe(true);
+
+      stateMachine.next(-1);
+      expect(stateMachine.enterState()).toBe(false);
+      expect(stateMachine.inState()).toBe(false);
+      expect(stateMachine.leaveState()).toBe(false);
+      expect(stateMachine.noneState()).toBe(true);
+
+    });
+  });
 
 });

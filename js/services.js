@@ -75,8 +75,8 @@ srv.factory('Schedule', [
           var oldest = this._stages.oldest().from.getFullYear(),
               newest = this._stages.newest().to.getFullYear(),
               level = {},
-              year = [true, true, true, true, true, true,
-                      true, true, true, true, true, true];
+              year = [-1, -1, -1, -1, -1, -1,
+                      -1, -1, -1, -1, -1, -1];
 
           for (var x=oldest; x <= newest; x++) {
             level[x] = year.slice();
@@ -127,7 +127,7 @@ srv.factory('Schedule', [
               }
               // Ist auf dem weg durch die Monate ein Monat nicht true 
               // heißt diese das die Level schon belegt ist.
-              if (level[year][month] !== true) {
+              if (level[year][month] !== -1) {
                 return false
               }
             }
@@ -183,6 +183,15 @@ srv.factory('Schedule', [
           return this._schedule;
 
         },
+
+        read: function () {
+          return this._schedule;
+        },
+
+        schedule: function () {
+          return this._schedule;
+        },
+
       };
     };
   }
@@ -260,8 +269,8 @@ srv.factory('Stages', [
         },
 
         timeRange: function () {
-          var oldest = this.oldest();
-          var newest = this.newest();
+          var oldest = this.oldest(),
+              newest = this.newest();
 
           return this.diffMonths(oldest.from, newest.to);
         },
@@ -274,6 +283,17 @@ srv.factory('Stages', [
 
         all: function () {
           return this._stages;
+        },
+
+        readStage: function (id) {
+          var stage = undefined;
+          angular.forEach(this._stages, function (val, i) {
+            if (val.id() === id) {
+              stage = val;
+              return
+            }
+          });
+          return stage;
         },
 
 
@@ -303,6 +323,276 @@ srv.factory('TimeLines', [
           this._lines.push(e);
         },
       }
+    };
+  }
+]);
+
+srv.factory('StateMachine', [
+  function () {
+    return function () {
+      return {
+        _noneState: -1,
+        _input: [],
+        _curr: -1,
+        _last: -1,
+
+        next: function (data) {
+          this._last = this._input[this._input.length-1];
+          if (this._last === undefined) {
+            this._last = -1;
+          }
+          this._input.push(data);
+          this._curr = data;
+        },
+
+        enterState: function () {
+          if (this._last !== -1 && this._curr === -1) {
+            return false;
+          }
+
+          if (this._last !== this._curr) {
+            return true;
+          }
+
+          return false
+        },
+
+        leaveState: function () {
+          if (this._last === -1) {
+            return false;
+          }
+
+          if (this._last !== this._curr) {
+            return true;
+          }
+
+          return false
+        },
+
+        inState: function () {
+          if (this._last === -1) {
+            return false;
+          }
+
+          if (this._last === this._curr) {
+            return true
+          }
+
+          return false
+        },
+
+        noneState: function () {
+          if (this._curr === this._noneState) {
+            return true
+          }
+
+          return false
+        },
+
+        lastInput: function() {
+          return this._last;
+        }
+
+      }
+    };
+  }
+]);
+
+srv.factory('LifePaper', [
+  'TimeLines',
+  'StateMachine',
+  function (TimeLines, StateMachine) {
+
+
+    return {
+      _paper: {},
+      _dims: {},
+      _stages:  {},
+      _schedule: [],
+
+      drawStage: function (x, levelIndex, duration) {
+            var levelHeight = (this._dims.levelSpacer + this._dims.stage.height),
+                y = (this._dims.paper.height - (this._dims.stage.marginBottom + (levelHeight * (levelIndex + 1)))),
+                width = duration * this._dims.month.width;
+
+            var r = this._paper.rect(x, y, width, this._dims.stage.height);
+            r.translate(0.5, 0.5);
+            //console.log('draw stage ', x, y, width, this._dims.stage.height, r);
+            return r;
+              
+      },
+
+      drawStageLevel: function (level, levelIndex) {
+        var that = this,
+            stateMachine = new StateMachine(),
+            duration = 0,
+            startPos = 0,
+            currPos = 0;
+
+        angular.forEach(level, function (ids, year) {
+          angular.forEach(ids, function (id, index) {
+            stateMachine.next(id);
+
+            if (stateMachine.inState()) {
+              duration++;
+            }
+
+            if (stateMachine.leaveState()) {
+              var rect = that.drawStage(startPos, levelIndex, duration),
+                  stage = that._stages.readStage(stateMachine.lastInput());
+
+              stage.x(rect.attrs.x);
+              stage.width(rect.attrs.width);
+
+              duration = 0;
+            }
+
+            if (stateMachine.enterState()) {
+              startPos = currPos;
+            }
+
+            currPos += that._dims.month.width;
+
+          });
+        });
+      },
+
+     drawStages: function () {
+        var that = this,
+            schedule = this._schedule.schedule();
+
+        angular.forEach(schedule, function (level, levelIndex) {
+          that.drawStageLevel(level, (levelIndex + 1) );
+        });
+
+      },
+
+      drawTimeLine: function () {
+        var path,
+            months = [],
+            from = this._stages.oldest().from.getFullYear(),
+            to = this._stages.newest().to.getFullYear(),
+            diff = (to - from)+1,
+            diffMonths = diff * 12,
+            h = this._dims.paper.height,
+            w = this._dims.paper.width,
+            monthHeight = 10,
+            monthWidth = this._dims.month.width,
+            year = from,
+            yH = (h - this._dims.timeLine.height); 
+
+        for (var x=1,y=0; y <= diffMonths; x += monthWidth, y++) {
+          if ((y % 12) === 0) {
+            path = this._paper.path('M'+ x +','+ h +'L'+ x +','+ yH);
+            path.translate(0.5, 0.5);
+            if (y !== diffMonths) {
+              this._paper.text((x + 15), this._dims.paper.height-5, year, this._dims.timeLine.fontSize);
+            }
+            year++;
+            continue;
+          }
+
+          var c = this._dims.timeLine.center;
+          var s = h - (c + Math.floor(this._dims.month.height/2));
+          var e = h - (c - Math.floor(this._dims.month.height/2));
+          path = this._paper.path('M'+ x +','+ s +'L'+ x +','+ e +'');
+          path.translate(0.5, 0.5);
+        }
+
+        // draw horizontal line
+        var heightTimeLineCenter = (h-this._dims.timeLine.center);
+        path = this._paper.path('M1,'+ heightTimeLineCenter +'L'+ (w) +','+ heightTimeLineCenter +'');
+        path.translate(0.5, 0.5);
+      },
+
+      initDims: function () {
+        var docWidth = angular.element(document).width();
+        var docHeight = angular.element(document).height();
+
+        var mainWidth = angular.element(this._mainBox).width();
+        var mainHeight = docHeight;
+
+        var paperWidth = mainWidth;
+        var paperHeight = Math.round(mainHeight * 0.40);
+
+        var timeLineWidth = paperWidth;
+        var timeLineHeight = Math.round(paperWidth * 0.04);
+        var timeLineCenter = Math.round(timeLineHeight / 3);
+        var timeLineFontSize = Math.round(timeLineCenter/0.6);
+
+        var levelSpacer = Math.round(paperHeight * 0.08);
+        var schedule = this._schedule.make();
+        var sl = schedule.length;
+        var stageHeight = Math.round(((paperHeight-timeLineHeight+levelSpacer) / Math.pow(sl,2)) - levelSpacer);
+      
+        var n = this._stages.newest();
+        var o = this._stages.oldest();
+        var sm = (((n.to.getFullYear() - o.from.getFullYear())+1) * 12);
+        var monthWidth = Math.round(paperWidth / sm);
+        var monthHeight = Math.round(timeLineHeight / 6);
+
+        var o = {
+          doc: {
+            width: docWidth,
+            height: docHeight,
+          },
+          main: {
+            width: mainWidth,
+            height: mainHeight,
+          },
+          paper: {
+            width: paperWidth,
+            height: paperHeight,
+          },
+          timeLine: {
+            width: timeLineWidth,
+            height: timeLineHeight,
+            center: timeLineCenter,
+            fontSize: timeLineFontSize,
+          },
+          levelSpacer: levelSpacer,
+          stage: {
+            height: stageHeight,
+            marginBottom: (timeLineHeight + levelSpacer),
+          },
+          month: {
+            width: monthWidth,
+            height: monthHeight,
+          }
+        };
+
+        console.log(o);
+
+        return o;
+      },
+
+      dims: function () {
+        return this._dims;
+      },
+
+      setup: function (data) {
+        this._stages = data.stages;
+        this._mainBox = data.mainBox;
+        this._schedule = data.schedule;
+
+        this._dims = this.initDims();
+
+        var paper = Raphael(
+          data.paper,
+          this._dims.paper.width, 
+          this._dims.paper.height
+        );
+
+        this._paper = paper;
+        this.timeLines = new TimeLines(this._paper);
+
+      },
+
+      draw: function () {
+        this.drawTimeLine();
+        this.drawStages();
+      },
+
     };
   }
 ]);
