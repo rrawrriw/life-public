@@ -1,5 +1,5 @@
 <div id="main">
-  <div id="now">{{ now }}</div>
+  <div id="now">{{ monthString(now.getMonth()) }} {{ now.getFullYear() }}</div>
 
   <div id="life">
     <div id="stages"></div>
@@ -11,7 +11,8 @@
       <li class="stage-detail" ng-repeat="stage in activeStages">
         <div class="color" style="background:{{ stage.color() }}"></div>
         <h3>{{ stage.title }}</h3>
-        <p>{{ stage.desc }}</p>
+        <p>{{ stage.desc | limitTo:150 }}</p>
+        <p><a class="open-detail" ng-click="details(stage.id())">mehr<a></p>
       </li>
     </ul>
   </div>

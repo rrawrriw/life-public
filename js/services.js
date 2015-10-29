@@ -5,113 +5,30 @@ var srv = angular.module('srv', []);
 srv.factory('Story', [
   'Stage',
   function (Stage) {
-    return [
-      new Stage({
-        title: 'Ausbildung zum Verlags-Kaufmann',
-        desc: 'Ausbildung zum Verlags-Kaufmann an der Johann Friedrich von Cotta Schule, Stuttgart',
-        from: new Date(2005, 8, 1, 0,0,0,0),
-        to: new Date(2008, 0, 1, 0,0,0,0),
-      }),
-
-      new Stage({
-        title: 'IT-Administrator',
-        desc: 'IT-Administrator im Unternehmen Hofmann-Verlag GmbH & Co. KG, Schorndorf Administration von Servern (Windows 2003, Debian) und des Netzwerks des Internetauftritts (php, apache2, mysql) der Client-Computer (XP, Vista, MAC OSX) und Drucker',
-        from: new Date(2004, 10, 1, 0,0,0,0),
-        to: new Date(2010, 9, 1, 0,0,0,0),
-      }),
+    return function (data) {
+      var stage, story = [];
       
-      new Stage({
-        title: 'CD Buchbeilagen',
-        desc: 'CD Buchbeilagen für Hofamann-Verlag',
-        from: new Date(2010, 9, 1, 0,0,0,0),
-        to: new Date(2015, 10, 1, 0,0,0,0),
-      }),
-      
-      new Stage({
-        title: 'Webshop Besatzartikel',
-        desc: 'Erstellen eine Webshops in Python',
-        from: new Date(2010, 7, 1, 0,0,0,0),
-        to: new Date(2010, 10, 1, 0,0,0,0),
-      }),
+      var parseDate = function (d) {
+        var v = d.split('T')[0].split('-'),
+            year = parseInt(v[0]),
+            month = parseInt(v[1]),
+            day = parseInt(v[2]);
+        return new Date(Date.UTC(year, month, day, 0,0,0,0));
+      };
 
-      new Stage({
-        title: 'Auslandsaufenthalt',
-        desc: 'Auslandsaufenthalt in Schweden, Neuseeland, Indien und Nepal',
-        from: new Date(2010, 10, 1, 0,0,0,0),
-        to: new Date(2011, 3, 1, 0,0,0,0),
-      }),
+      angular.forEach(data.Stages, function (val, index) {
+        stage = new Stage({
+          title: val.Title,
+          from: parseDate(val.From),
+          to: parseDate(val.To),
+          desc: val.Desc,
+        })
+        story.push(stage);
+      });
 
-      new Stage({
-        title: 'Zweirad-Berndt',
-        desc: 'Arbeit als Fahrradmechaniker bei Zweirad-Berndt in Korb',
-        from: new Date(2011, 3, 1, 0,0,0,0),
-        to: new Date(2013, 1, 1, 0,0,0,0),
-      }),
-
-      new Stage({
-        title: 'Webshop Edel und Rostfrei',
-        desc: 'Erstellen eine Webshops in Python',
-        from: new Date(2011, 4, 1, 0,0,0,0),
-        to: new Date(2011, 7, 1, 0,0,0,0),
-      }),
-
-      new Stage({
-        title: 'Webseite atelier-josten',
-        desc: 'Erstellen der Webseite atelier-josten',
-        from: new Date(2012, 10, 1, 0,0,0,0),
-        to: new Date(2013, 0, 1, 0,0,0,0),
-      }),
-
-      new Stage({
-        title: 'Webseite Zweirad-Berndt',
-        desc: 'Erstellen der Webseite atelier-josten',
-        from: new Date(2012, 9, 1, 0,0,0,0),
-        to: new Date(2012, 11, 1, 0,0,0,0),
-      }),
-
-      new Stage({
-        title: 'Kaufmännische FH',
-        desc: 'kaufmännische Fachhochschulreife am Kolping-Berufskolleg, Stuttgart',
-        from: new Date(2011, 8, 1, 0,0,0,0),
-        to: new Date(2012, 6, 1, 0,0,0,0),
-      }),
-
-      new Stage({
-        title: 'Project - Dokumenten Scanning',
-        desc: 'Scannen und ablegen von Dokumenten',
-        from: new Date(2013, 1, 1, 0,0,0,0),
-        to: new Date(2013, 2, 1, 0,0,0,0),
-      }),
-
-      new Stage({
-        title: 'Mathematik Studium',
-        desc: 'Studium der Mathematik an der HFT-Stuttgart',
-        from: new Date(2013, 2, 1, 0,0,0,0),
-        to: new Date(2015, 2, 1, 0,0,0,0),
-      }),
-
-      new Stage({
-        title: 'Werkstudent DFS',
-        desc: 'Werkstudent bei Daimler Financial Services im IT-Projemanagment',
-        from: new Date(2014, 0, 1, 0,0,0,0),
-        to: new Date(2015, 10, 1, 0,0,0,0),
-      }),
-
-      new Stage({
-        title: 'Project - DocMa',
-        desc: 'Documentverwaltung',
-        from: new Date(2015, 4, 1, 0,0,0,0),
-        to: new Date(2015, 7, 1, 0,0,0,0),
-      }),
-
-      new Stage({
-        title: 'Informatik Studium',
-        desc: 'Studium der Informatik an der HFT-Stuttgart',
-        from: new Date(2015, 3, 1, 0,0,0,0),
-        to: new Date(2015, 10, 1, 0,0,0,0),
-      }),
-
-    ];
+      console.log(story);
+      return story;
+    };
   }
 ]);
 
@@ -217,7 +134,7 @@ srv.factory('Schedule', [
           startMonth = stage.to.getMonth();
           for (var year=toYear; fromYear <= year; year--) {
             for (var month=startMonth; month >= 0; month--) {
-              var currDate = new Date(year, month, 1, 0,0,0,0);
+              var currDate = new Date(Date.UTC(year, month, 1, 0,0,0,0));
               if (stage.from > currDate.getTime()) {
                 return;
               }
@@ -534,6 +451,8 @@ srv.factory('LifePaper', [
       _dims: {},
       _stages:  {},
       _schedule: [],
+      _maxYear: null,
+      _minYear: null,
 
       drawStage: function (x, levelIndex, duration, stage) {
             var levelHeight = (this._dims.levelSpacer + this._dims.stage.height),
@@ -557,6 +476,7 @@ srv.factory('LifePaper', [
             currPos = 0;
 
         angular.forEach(level, function (ids, year) {
+          var y = parseInt(year);
           angular.forEach(ids, function (id, index) {
             stateMachine.next(id);
 
@@ -564,8 +484,21 @@ srv.factory('LifePaper', [
               duration++;
             }
 
-            if (stateMachine.leaveState()) {
-              var stage = that._stages.readStage(stateMachine.lastInput()),
+            // leavingState or last duration of the level
+            if ( stateMachine.leaveState() || ( (y === that._maxYear) &&  (index === (ids.length-1)) ) ) {
+              var tmpId;
+
+              // last duration but everything is already drawn
+              if (duration == 0) {
+                return;
+              }
+
+              tmpId = stateMachine.lastInput();
+              if ( (y === that._maxYear) && (index === (ids.length-1)) ) {
+                tmpId = id;
+              }
+
+              var stage = that._stages.readStage(tmpId),
                   rect = that.drawStage(startPos, levelIndex, duration, stage);
 
               stage.x(rect.attrs.x);
@@ -575,7 +508,13 @@ srv.factory('LifePaper', [
               duration = 0;
             }
 
+            // Muss nach obigen if-Statement kommen. Es kann sein
+            // dass man sich gleichzeitg im Status leaveState und enterState befindet
+            // da aber dann beim verlassen ein Durchgang zuviel gezählt werden
+            // würde muss zu erste duration = 0 gesetzt werden 
+            // bevor erneut mit zählen beginn werden kann.
             if (stateMachine.enterState()) {
+              duration++;
               startPos = currPos;
             }
 
@@ -595,11 +534,23 @@ srv.factory('LifePaper', [
 
       },
 
+      date: function (x) {
+        var oldest = this._minYear;
+        var newsest = this._maxYear;
+        var months = Math.floor(x / this._dims.month.width) + 1;
+        var years = Math.floor(months / 12)
+
+        var m = months - (years * 12)
+
+        return new Date(oldest + years, m-1, 1, 0,0,0,0);
+
+      },
+
       drawTimeLine: function () {
         var path,
             months = [],
-            from = this._stages.oldest().from.getFullYear(),
-            to = this._stages.newest().to.getFullYear(),
+            from = this._minYear,
+            to = this._maxYear,
             diff = (to - from)+1,
             diffMonths = diff * 12,
             h = this._dims.paper.height,
@@ -641,7 +592,7 @@ srv.factory('LifePaper', [
         var mainHeight = docHeight;
 
         var paperWidth = mainWidth;
-        var paperHeight = Math.round(mainHeight * 0.40);
+        var paperHeight = Math.round(mainHeight * 0.30);
 
         var timeLineWidth = paperWidth;
         var timeLineHeight = Math.round(paperWidth * 0.04);
@@ -650,12 +601,13 @@ srv.factory('LifePaper', [
 
         var levelSpacer = Math.round(paperHeight * 0.06);
         var schedule = this._schedule.make();
+        console.log(schedule);
         var sl = schedule.length;
         var stageHeight = Math.round(((paperHeight-timeLineHeight-(2*levelSpacer)) / sl) - levelSpacer);
       
-        var n = this._stages.newest();
-        var o = this._stages.oldest();
-        var sm = (((n.to.getFullYear() - o.from.getFullYear())+1) * 12);
+        var n = this._maxYear;
+        var o = this._minYear;
+        var sm = (((n - o)+1) * 12);
         var monthWidth = Math.round(paperWidth / sm);
         var monthHeight = Math.round(timeLineHeight / 6);
 
@@ -689,8 +641,6 @@ srv.factory('LifePaper', [
           }
         };
 
-        console.log(o);
-
         return o;
       },
 
@@ -703,6 +653,9 @@ srv.factory('LifePaper', [
         this._stages = data.stages;
         this._mainBox = data.mainBox;
         this._schedule = data.schedule;
+
+        this._minYear = this._stages.oldest().from.getFullYear();
+        this._maxYear = this._stages.newest().to.getFullYear();
 
         this._dims = this.initDims();
 
@@ -776,20 +729,37 @@ srv.factory('RGB', [
 
         color: function () {
           var i = this.randInt(0, (this._baseColors.length - 1) );
-          console.log('Pick Color', i);
           var c = this._colors[this._baseColors[i]];
           
           var r = this.randInt(c.r-20, c.r);
           var g = this.randInt(c.g-20, c.r);
           var b = this.randInt(c.b-20, c.r);
 
-          console.log(c);
-          console.log(this.toHex(r,g,b));
           return this.toHex(r,g,b);
 
         },
 
       }
     }
+  }
+]);
+
+srv.factory('D', [
+  function () {
+    return {
+      monthStr: function (no) {
+        var months = ['Januar', 'Februar', 'März', 'April',
+                      'Mai', 'Juni', 'Juli', 'August', 
+                      'September', 'Oktober', 'November',
+                      'Dezember'];
+
+        return months[no];
+      },
+
+      deDate: function (t) {
+        return this.monthStr(t.getMonth()) +' '+ t.getFullYear(); 
+      },
+
+    };
   }
 ]);

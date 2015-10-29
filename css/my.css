@@ -33,6 +33,7 @@
 
 .stage-detail {
   width: 30%;
+  min-height: 16em;
   float: left;
   margin-left: 0;
   margin-right: 15px;
@@ -41,7 +42,7 @@
   color: white;
   background: #1F1F1F;
   border: 3px solid black;
-  border-radius: 4px;
+  border-radius: 6px;
   list-style: none;
 }
 
@@ -49,8 +50,29 @@
   margin-top: 10px;
 }
 
+.open-detail {
+  cursor: pointer;
+}
+
 .color {
   width: 80%;
   height: 20px;
   border-radius: 6px;
+}
+
+#now {
+  font-size: 14px;
+  font-weight: bold;
+  color: #1F1F1F;
+}
+
+#timeRange {
+  font-style: italic;
+  color: gray;
+  margin-bottom: 15px;
+}
+
+#menu-more:focus
+#menu-more:hover {
+  background: none;
 }
