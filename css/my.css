@@ -32,8 +32,8 @@
 }
 
 .stage-detail {
-  width: 30%;
-  min-height: 16em;
+  width: 22%;
+  height: 14em;
   float: left;
   margin-left: 0;
   margin-right: 15px;
@@ -47,7 +47,8 @@
 }
 
 .stage-detail h3 {
-  margin-top: 10px;
+  font-size: 1.4em;
+  margin-top: 0.6em;
 }
 
 .open-detail {

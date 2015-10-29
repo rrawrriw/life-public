@@ -3,31 +3,52 @@
 var srv = angular.module('srv', []);
 
 srv.factory('Story', [
+  '$q',
+  '$http',
   'Stage',
-  function (Stage) {
-    return function (data) {
-      var stage, story = [];
-      
-      var parseDate = function (d) {
+  function ($q, $http, Stage) {
+    return {
+      parseDate: function (d) {
         var v = d.split('T')[0].split('-'),
             year = parseInt(v[0]),
             month = parseInt(v[1]),
             day = parseInt(v[2]);
-        return new Date(Date.UTC(year, month, day, 0,0,0,0));
-      };
+        return new Date(Date.UTC(year, (month-1), day, 0,0,0,0));
+      },
 
-      angular.forEach(data.Stages, function (val, index) {
-        stage = new Stage({
-          title: val.Title,
-          from: parseDate(val.From),
-          to: parseDate(val.To),
-          desc: val.Desc,
-        })
-        story.push(stage);
-      });
+      read: function () {
+        var that = this,
+          d = $q.defer();
 
-      console.log(story);
-      return story;
+        var success = function (resp) {
+          console.log(resp);
+          if (resp.data.Err !== undefined || resp.status !== 200) {
+            d.reject(resp);
+          }
+
+          var stage, story = [];
+          angular.forEach(resp.data.Stages, function (val, index) {
+            stage = new Stage({
+              title: val.Title,
+              from: that.parseDate(val.From),
+              to: that.parseDate(val.To),
+              desc: val.Desc,
+            })
+            story.push(stage);
+          });
+
+          d.resolve(story);
+
+        };
+
+        var fail = function (resp) {
+          d.reject(resp);
+        }
+
+        $http.get('/data').then(success, fail);
+
+        return d.promise;
+      },
     };
   }
 ]);
@@ -484,7 +505,7 @@ srv.factory('LifePaper', [
               duration++;
             }
 
-            // leavingState or last duration of the level
+            // leaveState or last duration of the level
             if ( stateMachine.leaveState() || ( (y === that._maxYear) &&  (index === (ids.length-1)) ) ) {
               var tmpId;
 
@@ -504,6 +525,9 @@ srv.factory('LifePaper', [
               stage.x(rect.attrs.x);
               stage.width(rect.attrs.width);
               stage.color(rect.attrs.fill);
+              rect.click(function () {
+                that._detailsFunc(stage.id());
+              });
 
               duration = 0;
             }
@@ -653,6 +677,7 @@ srv.factory('LifePaper', [
         this._stages = data.stages;
         this._mainBox = data.mainBox;
         this._schedule = data.schedule;
+        this._detailsFunc = data.detailsFunc;
 
         this._minYear = this._stages.oldest().from.getFullYear();
         this._maxYear = this._stages.newest().to.getFullYear();

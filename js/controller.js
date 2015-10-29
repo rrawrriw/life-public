@@ -21,23 +21,42 @@ ctrls.controller('LifeCtrl', [
     };
 
     var init = function() {
-      $scope.story = new Story(DATA);
-      $scope.stages = new Stages($scope.story);
-      $scope.schedule = new Schedule($scope.stages);
+      $scope.story = Story;
+      var success = function (story) {
+        $scope.story = story;
+        $scope.stages = new Stages($scope.story);
+        $scope.schedule = new Schedule($scope.stages);
 
-      $scope.now = '04/2014';
+        $scope.now = '04/2014';
 
-      $scope.lifePaper = LifePaper;
-      $scope.lifePaper.setup({
-        paper: angular.element('#stages')[0],
-        colors: ['#ffec00'], //'#87888C'],
-        stages: $scope.stages,
-        schedule: $scope.schedule,
-        mainBox: '#main',
-      });
+        $scope.lifePaper = LifePaper;
+        $scope.lifePaper.setup({
+          paper: angular.element('#stages')[0],
+          colors: ['#ffec00'], //'#87888C'],
+          stages: $scope.stages,
+          schedule: $scope.schedule,
+          mainBox: '#main',
+          detailsFunc: $scope.details,
+        });
 
-      $scope.lifePaper.draw();
-      initRenderPage($scope.lifePaper.dims());
+        $scope.lifePaper.draw();
+        initRenderPage($scope.lifePaper.dims());
+      }
+
+      var fail = function (resp) {
+        $scope.globalError = {
+          show: true,
+          msg: resp.Err,
+        };
+
+        setTimeout(function () {
+          console.log('run timeout');
+          $scope.globalError = false;
+          //$scope.digest();
+        }, 1500);
+      }
+
+      $scope.story.read().then(success, fail);
 
     };
 
