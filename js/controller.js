@@ -23,6 +23,7 @@ ctrls.controller('LifeCtrl', [
     var init = function() {
       $scope.story = Story;
       var success = function (story) {
+        $scope.marked = marked;
         $scope.story = story;
         $scope.stages = new Stages($scope.story);
         $scope.schedule = new Schedule($scope.stages);
@@ -94,6 +95,7 @@ ctrls.controller('LifeCtrl', [
 ctrls.controller('DetailsCtrl',
   function ($scope, $uibModalInstance, D, stage) {
     $scope.stage = stage;
+    $scope.stage.desc = marked(stage.desc);
 
     $scope.deDate = function (tO) {
       return D.deDate(tO);

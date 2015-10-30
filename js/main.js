@@ -1,4 +1,4 @@
-var app = angular.module('life', ['ngRoute', 'ui.bootstrap', 'srv', 'ctrl']);
+var app = angular.module('life', ['ngRoute', 'ngSanitize', 'ui.bootstrap', 'srv', 'ctrl']);
 
 app.config(['$routeProvider',
   function($routeProvider) {

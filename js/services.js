@@ -476,12 +476,24 @@ srv.factory('LifePaper', [
       _minYear: null,
 
       drawStage: function (x, levelIndex, duration, stage) {
-            var levelHeight = (this._dims.levelSpacer + this._dims.stage.height),
+            var that = this, 
+                levelHeight = (this._dims.levelSpacer + this._dims.stage.height),
                 y = ( this._dims.paper.height - this._dims.stage.marginBottom - (levelHeight * levelIndex) ),
                 width = duration * this._dims.month.width;
 
             var color = this._RGB.color();
             var r = this._paper.rect(x, y, width, this._dims.stage.height);
+            if (stage.title.length*5 < width) {
+              var t = this._paper.text(
+                  (x + Math.floor(width/2)),
+                  (y + Math.floor(this._dims.stage.height/2)),
+                  stage.title, 
+                  Math.floor(this._dims.stage.height/4)
+              );
+              t.click(function () {
+                that._detailsFunc(stage.id());
+              });
+            }
             r.translate(0.5, 0.5);
             r.attr({'fill': color});
             //console.log('draw stage ', x, y, width, this._dims.stage.height, r);

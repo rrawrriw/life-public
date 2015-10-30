@@ -6,7 +6,5 @@
   <div id="timeRange">
     {{ deDate(stage.from) }} - {{ deDate(stage.to) }}
   </div>
-  <div id="desc">
-    {{ stage.desc }}
-  </div>
+  <div id="desc" ng-bind-html="stage.desc"></div>
 </div>
