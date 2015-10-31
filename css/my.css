@@ -43,6 +43,7 @@
   border: 1px solid black;
   border-radius: 6px;
   list-style: none;
+  font-size: 0.8em;
 }
 
 .stage-detail h3 {
@@ -87,6 +88,11 @@
   margin-right: 15px;
 }
 
+#about-me #info dt img {
+  border: 1px solid black;
+  padding: 2px;
+}
+
 #about-me #info dd {
   float: left;
 }
@@ -95,10 +101,30 @@
 #about-me #info #street,
 #about-me #info #city,
 #about-me #info #mail,
-#about-me #info #tel {
-  margin-bottom: 0.4em;
+#about-me #info #tel,
+#about-me #info #geb{
+  margin-bottom: 0.0em;
+}
+
+#about-me #info #name {
+  font-weight: bold;
+  font-style: italic;
 }
 
 #about-me h3 {
   margin-bottom: 1em;
+}
+
+#about-me #misc {
+  width: 45em;
+  margin-top: 3em;
+}
+
+#about-me #sourcecode {
+  margin-top: 3em;
+  margin-bottom: 5em;
+}
+
+#move-me {
+  width: 13em;
 }

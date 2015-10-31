@@ -11,7 +11,8 @@ ctrls.controller('LifeCtrl', [
   'Schedule',
   'Story',
   'D',
-  function ($scope, $uibModal, Stage, Stages, LifePaper, Schedule, Story, D) {
+  'Move',
+  function ($scope, $uibModal, Stage, Stages, LifePaper, Schedule, Story, D, Move) {
 
     var initRenderPage = function (dims) {
       var pos = 1;
@@ -22,6 +23,7 @@ ctrls.controller('LifeCtrl', [
 
     var init = function() {
       $scope.story = Story;
+      $scope.move = Move;
       var success = function (story) {
         $scope.marked = marked;
         $scope.story = story;
@@ -85,6 +87,7 @@ ctrls.controller('LifeCtrl', [
       $scope.activeStages = $scope.stages.activeStage(pos);
       $scope.lifePaper.timeLines.draw(pos);
       $scope.now = $scope.lifePaper.date(pos);
+      $scope.move.me = false;
     };
 
     init();

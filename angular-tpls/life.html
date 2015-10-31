@@ -6,6 +6,8 @@
     <input id="life-time" type="range" value="0" min="0" max="600" ng-model="lifeTime" ng-change="ctrlStages($event)">  
   </div>
 
+  <img id="move-me" ng-show="move.me" src="/public/img/move-me.png">
+
   <div id="details">
     <ul id="stage-details">
       <li class="stage-detail" ng-repeat="stage in activeStages">
