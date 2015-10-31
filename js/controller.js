@@ -107,3 +107,9 @@ ctrls.controller('DetailsCtrl',
 
   }
 );
+
+ctrls.controller('AboutCtrl', function () {
+});
+
+ctrls.controller('AboutLifeCtrl', function () {
+});

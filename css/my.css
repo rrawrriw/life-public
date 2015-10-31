@@ -32,8 +32,7 @@
 }
 
 .stage-detail {
-  width: 22%;
-  height: 14em;
+  width: 23%;
   float: left;
   margin-left: 0;
   margin-right: 15px;
@@ -41,13 +40,13 @@
   padding: 15px;
   color: white;
   background: #1F1F1F;
-  border: 3px solid black;
+  border: 1px solid black;
   border-radius: 6px;
   list-style: none;
 }
 
 .stage-detail h3 {
-  font-size: 1.4em;
+  font-size: 1.3em;
   margin-top: 0.6em;
 }
 
@@ -76,4 +75,30 @@
 #menu-more:focus
 #menu-more:hover {
   background: none;
+}
+
+#about-me #info {
+  overflow: auto;
+  margin-bottom: 1em;
+}
+
+#about-me #info dt {
+  float: left;
+  margin-right: 15px;
+}
+
+#about-me #info dd {
+  float: left;
+}
+
+#about-me #info #name,
+#about-me #info #street,
+#about-me #info #city,
+#about-me #info #mail,
+#about-me #info #tel {
+  margin-bottom: 0.4em;
+}
+
+#about-me h3 {
+  margin-bottom: 1em;
 }
