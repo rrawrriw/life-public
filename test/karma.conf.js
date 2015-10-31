@@ -8,6 +8,7 @@ module.exports = function(config){
       'ext/angular/angular.js',
       'ext/angular-mocks/angular-mocks.js',
       'ext/angular-route/angular-route.js',
+      'ext/angular-sanitize/angular-sanitize.js',
       'ext/angular-resource/angular-resource.js',
       'ext/angular-bootstrap/ui-bootstrap.min.js',
       'js/*.js',
