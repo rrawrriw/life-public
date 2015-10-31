@@ -21,7 +21,6 @@ srv.factory('Story', [
           d = $q.defer();
 
         var success = function (resp) {
-          console.log(resp);
           if (resp.data.Err !== undefined || resp.status !== 200) {
             d.reject(resp);
           }
@@ -496,7 +495,6 @@ srv.factory('LifePaper', [
             }
             r.translate(0.5, 0.5);
             r.attr({'fill': color});
-            //console.log('draw stage ', x, y, width, this._dims.stage.height, r);
             return r;
               
       },
@@ -637,7 +635,6 @@ srv.factory('LifePaper', [
 
         var levelSpacer = Math.round(paperHeight * 0.06);
         var schedule = this._schedule.make();
-        console.log(schedule);
         var sl = schedule.length;
         var stageHeight = Math.round(((paperHeight-timeLineHeight-(2*levelSpacer)) / sl) - levelSpacer);
       
@@ -764,13 +761,32 @@ srv.factory('RGB', [
           return "#" + this.pToHex(r) + this.pToHex(g) + this.pToHex(b);
         },
 
+        newMin: function (n) {
+          var tmp = n-40;
+          if (tmp < 0) {
+            tmp = 0;
+          }
+
+          return tmp;
+        },
+
+        newMax: function (n) {
+          var tmp = n+40;
+          if (tmp > 255) {
+            tmp = 255;
+          }
+
+          return tmp;
+        },
+
         color: function () {
+          var min;
           var i = this.randInt(0, (this._baseColors.length - 1) );
           var c = this._colors[this._baseColors[i]];
-          
-          var r = this.randInt(c.r-20, c.r);
-          var g = this.randInt(c.g-20, c.r);
-          var b = this.randInt(c.b-20, c.r);
+
+          var r = this.randInt(this.newMin(c.r), this.newMax(c.r));
+          var g = this.randInt(this.newMin(c.g), this.newMax(c.r));
+          var b = this.randInt(this.newMin(c.b), this.newMax(c.r));
 
           return this.toHex(r,g,b);
 
