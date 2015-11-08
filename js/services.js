@@ -641,7 +641,7 @@ srv.factory('LifePaper', [
         var n = this._maxYear;
         var o = this._minYear;
         var sm = (((n - o)+1) * 12);
-        var monthWidth = Math.round(paperWidth / sm);
+        var monthWidth = Math.floor(paperWidth / sm);
         var monthHeight = Math.round(timeLineHeight / 6);
 
         var o = {
