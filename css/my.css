@@ -1,5 +1,10 @@
+tspan {
+  cursor: pointer;
+}
+
 .navbar {
   background: #ffec00;
+  border-radius: 0px;
 }
 
 #main {
