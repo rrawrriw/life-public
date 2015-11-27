@@ -95,24 +95,25 @@ ctrls.controller('LifeCtrl', [
   }
 ]);
 
-ctrls.controller('DetailsCtrl',
-  function ($scope, $uibModalInstance, D, stage) {
-    $scope.stage = stage;
-    $scope.stage.desc = marked(stage.desc);
-
-    $scope.deDate = function (tO) {
-      return D.deDate(tO);
+ctrls.controller('AboutCtrl', [
+  '$log',
+  '$scope', 
+  '$http',
+  '$sce',
+  function ($log, $scope, $http, $sce) {
+    var success = function (resp) {
+      console.log(resp.data['about-me']);
+      $scope.content = $sce.trustAsHtml(marked(resp.data['about-me'], {"gfm": true}));
     };
 
-    $scope.cancel = function () {
-      $uibModalInstance.dismiss('cancel');
-    };
+    var error = function (resp) {
+      $log.error(resp);
+    }
+
+    $http.get('/page/about-me').then(success, error);
 
   }
-);
-
-ctrls.controller('AboutCtrl', function () {
-});
+]);
 
 ctrls.controller('AboutLifeCtrl', function () {
 });

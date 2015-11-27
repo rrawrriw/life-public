@@ -14,14 +14,10 @@ app.config(['$routeProvider',
         templateUrl: 'public/angular-tpls/life.html',
         controller: 'LifeCtrl',
       })
-      .when('/about', {
-        templateUrl: 'public/angular-tpls/about.html',
+      .when('/aboutMe', {
+        templateUrl: 'public/angular-tpls/aboutMe.html',
         controller: 'AboutCtrl',
       })
-      .when('/aboutLife', {
-        templateUrl: 'public/angular-tpls/aboutLife.html',
-        controller: 'AboutLifeCtrl',
-      })
-      .otherwise('/life');
+      .otherwise('/aboutMe');
   }
 ]);
