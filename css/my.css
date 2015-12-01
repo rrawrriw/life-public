@@ -3,7 +3,6 @@ tspan {
 }
 
 .navbar {
-  background: #ffec00;
   border-radius: 0px;
 }
 
@@ -12,6 +11,10 @@ tspan {
   margin-left: auto;
   margin-right: auto;
   margin-top: 50px;
+}
+
+#more-infos:hover {
+  color: #777;
 }
 
 #life {

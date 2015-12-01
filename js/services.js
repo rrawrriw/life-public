@@ -492,6 +492,9 @@ srv.factory('LifePaper', [
               t.click(function () {
                 that._detailsFunc(stage.id());
               });
+              if (CONFIG.stagesFontColor !== undefined) {
+                t.attr({fill: CONFIG.stagesFontColor });
+              }
             }
             r.translate(0.5, 0.5);
             r.attr({'fill': color});

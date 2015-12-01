@@ -2,7 +2,17 @@
 
 var ctrls = angular.module('ctrl', []);
 
+ctrls.controller('MainCtrl', [
+  '$rootScope',
+  function ($rootScope) {
+    $rootScope.title = CONFIG.title; 
+    $rootScope.navStyle = {'background-color': CONFIG.titleBackgroundColor,
+                           color: CONFIG.titleFontColor};
+  }
+]);
+
 ctrls.controller('LifeCtrl', [
+  '$rootScope',
   '$scope',
   '$uibModal',
   'Stage',
@@ -12,7 +22,7 @@ ctrls.controller('LifeCtrl', [
   'Story',
   'D',
   'Move',
-  function ($scope, $uibModal, Stage, Stages, LifePaper, Schedule, Story, D, Move) {
+  function ($rootScope, $scope, $uibModal, Stage, Stages, LifePaper, Schedule, Story, D, Move) {
 
     var initRenderPage = function (dims) {
       var pos = 1;
@@ -35,7 +45,7 @@ ctrls.controller('LifeCtrl', [
         $scope.lifePaper = LifePaper;
         $scope.lifePaper.setup({
           paper: angular.element('#stages')[0],
-          colors: ['#ffec00'], //'#87888C'],
+          colors: [CONFIG.stagesBackgroundColor],
           stages: $scope.stages,
           schedule: $scope.schedule,
           mainBox: '#main',
@@ -118,7 +128,6 @@ ctrls.controller('AboutCtrl', [
   '$sce',
   function ($log, $scope, $http, $sce) {
     var success = function (resp) {
-      console.log(resp.data['about-me']);
       $scope.content = $sce.trustAsHtml(marked(resp.data['about-me'], {"gfm": true}));
     };
 
